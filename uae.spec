@@ -8,7 +8,7 @@
 %define cdrvers 	%{cdrmainvers}a05
 
 # For building with SCSI support
-%define build_scsi 1
+%define build_scsi 0
 %{?_with_scsi: %global build_scsi 1}
 %{?_without_scsi: %global build_scsi 0}
 
