@@ -1,3 +1,4 @@
+%define Werror_cflags %nil
 %define name		uae
 %define mversion	0.8.29
 %define fversion	20081130
@@ -23,7 +24,7 @@ Group: Emulators
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 BuildRequires: XFree86-devel
 BuildRequires: gtk+-devel
-BuildRequires: glib-devel
+BuildRequires: glib-devel cdrkit
 BuildRequires: SDL-devel
 
 %description
