@@ -1,0 +1,63 @@
+diff -up fs-uae-3.0.5/src/blkdev.cpp.omv~ fs-uae-3.0.5/src/blkdev.cpp
+--- fs-uae-3.0.5/src/blkdev.cpp.omv~	2021-08-12 19:56:04.914748772 +0200
++++ fs-uae-3.0.5/src/blkdev.cpp	2021-08-12 20:00:33.498537263 +0200
+@@ -755,7 +755,7 @@ int sys_command_cd_pause (int unitnum, i
+ 	int v;
+ 	if (state[unitnum].device_func->pause == NULL) {
+ 		int as = audiostatus (unitnum);
+-		uae_u8 cmd[10] = {0x4b,0,0,0,0,0,0,0,paused?0:1,0};
++		uae_u8 cmd[10] = {0x4b,0,0,0,0,0,0,0,static_cast<uae_u8>(paused?0:1),0};
+ 		do_scsi (unitnum, cmd, sizeof cmd);
+ 		v = as == AUDIO_STATUS_PAUSED;
+ 	} else {
+@@ -893,7 +893,7 @@ int sys_command_cd_read (int unitnum, ua
+ 	if (!getsem (unitnum))
+ 		return 0;
+ 	if (state[unitnum].device_func->read == NULL) {
+-		uae_u8 cmd1[12] = { 0x28, 0, block >> 24, block >> 16, block >> 8, block >> 0, 0, size >> 8, size >> 0, 0, 0, 0 };
++		uae_u8 cmd1[12] = { 0x28, 0, static_cast<uae_u8>(block >> 24), static_cast<uae_u8>(block >> 16), static_cast<uae_u8>(block >> 8), static_cast<uae_u8>(block >> 0), 0, static_cast<uae_u8>(size >> 8), static_cast<uae_u8>(size >> 0), 0, 0, 0 };
+ 		v = do_scsi (unitnum, cmd1, sizeof cmd1, data, size * 2048);
+ #if 0
+ 		if (!v) {
+@@ -915,7 +915,7 @@ int sys_command_cd_rawread (int unitnum,
+ 	if (!getsem (unitnum))
+ 		return 0;
+ 	if (state[unitnum].device_func->rawread == NULL) {
+-		uae_u8 cmd[12] = { 0xbe, 0, block >> 24, block >> 16, block >> 8, block >> 0, size >> 16, size >> 8, size >> 0, 0x10, 0, 0 };
++		uae_u8 cmd[12] = { 0xbe, 0, static_cast<uae_u8>(block >> 24), static_cast<uae_u8>(block >> 16), static_cast<uae_u8>(block >> 8), static_cast<uae_u8>(block >> 0), static_cast<uae_u8>(size >> 16), static_cast<uae_u8>(size >> 8), static_cast<uae_u8>(size >> 0), 0x10, 0, 0 };
+ 		v = do_scsi (unitnum, cmd, sizeof cmd, data, size * sectorsize);
+ 	} else {
+ 		v = state[unitnum].device_func->rawread (unitnum, data, block, size, sectorsize, 0xffffffff);
+@@ -931,7 +931,7 @@ int sys_command_cd_rawread (int unitnum,
+ 	if (!getsem (unitnum))
+ 		return 0;
+ 	if (state[unitnum].device_func->rawread == NULL) {
+-		uae_u8 cmd[12] = { 0xbe, 0, block >> 24, block >> 16, block >> 8, block >> 0, size >> 16, size >> 8, size >> 0, 0x10, 0, 0 };
++		uae_u8 cmd[12] = { 0xbe, 0, static_cast<uae_u8>(block >> 24), static_cast<uae_u8>(block >> 16), static_cast<uae_u8>(block >> 8), static_cast<uae_u8>(block >> 0), static_cast<uae_u8>(size >> 16), static_cast<uae_u8>(size >> 8), static_cast<uae_u8>(size >> 0), 0x10, 0, 0 };
+ 		v = do_scsi (unitnum, cmd, sizeof cmd, data, size * sectorsize);
+ 	} else {
+ 		v = state[unitnum].device_func->rawread (unitnum, data, block, size, sectorsize, (sectortype << 16) | (scsicmd9 << 8) | subs);
+@@ -949,7 +949,7 @@ int sys_command_read (int unitnum, uae_u
+ 	if (!getsem (unitnum))
+ 		return 0;
+ 	if (state[unitnum].device_func->read == NULL) {
+-		uae_u8 cmd[12] = { 0xa8, 0, 0, 0, 0, 0, size >> 24, size >> 16, size >> 8, size >> 0, 0, 0 };
++		uae_u8 cmd[12] = { 0xa8, 0, 0, 0, 0, 0, static_cast<uae_u8>(size >> 24), static_cast<uae_u8>(size >> 16), static_cast<uae_u8>(size >> 8), static_cast<uae_u8>(size >> 0), 0, 0 };
+ 		cmd[2] = (uae_u8)(block >> 24);
+ 		cmd[3] = (uae_u8)(block >> 16);
+ 		cmd[4] = (uae_u8)(block >> 8);
+diff -up fs-uae-3.0.5/src/expansion.cpp.omv~ fs-uae-3.0.5/src/expansion.cpp
+--- fs-uae-3.0.5/src/expansion.cpp.omv~	2021-08-12 20:00:58.431702854 +0200
++++ fs-uae-3.0.5/src/expansion.cpp	2021-08-12 20:01:32.183926926 +0200
+@@ -1557,9 +1557,9 @@ static addrbank* expamem_init_filesys (i
+ 		0x02, 0x00, /* da_Size */
+ 		FILESYS_DIAGPOINT >> 8, FILESYS_DIAGPOINT & 0xff,
+ 		FILESYS_BOOTPOINT >> 8, FILESYS_BOOTPOINT & 0xff,
+-		0, hide ? 0 : 14, // Name offset
++		0, static_cast<uae_u8>(hide ? 0 : 14), // Name offset
+ 		0, 0, 0, 0,
+-		hide ? 0 : 'U', hide ? 0 : 'A', hide ? 0 : 'E', 0
++		static_cast<uae_u8>(hide ? 0 : 'U'), static_cast<uae_u8>(hide ? 0 : 'A'), static_cast<uae_u8>(hide ? 0 : 'E'), 0
+ 	};
+ 
+ 	expamem_init_clear ();

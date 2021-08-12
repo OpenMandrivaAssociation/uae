@@ -1,31 +1,13 @@
-%define Werror_cflags %nil
-%define name		uae
-%define mversion	0.8.29
-%define fversion	20081130
-%define release		0.%{fversion}.%mkrel 1
-%define cdrname		cdrecord
-%define cdrmainvers	1.9
-%define cdrvers 	%{cdrmainvers}a05
-
-# For building with SCSI support
-%define build_scsi 0
-%{?_with_scsi: %global build_scsi 1}
-%{?_without_scsi: %global build_scsi 0}
-
 Summary: A software emulation of the Amiga system
-Name: %{name}
-Version: %{mversion}
-Release: %{release}
-URL: http://www.rcdrummond.net/uae
-Source0: http://www.rcdrummond.net/uae/uae-%{mversion}.tar.bz2
-Source1: ftp://ftp.berlios.de/pub/cdrecord/alpha/%{cdrname}-%{cdrvers}.tar.bz2
-License: GPL
+Name: uae
+Version: 3.0.5
+Release: 1
+URL: https://fs-uae.net/download#source
+Source0: https://fs-uae.net/stable/%{version}/fs-uae-%{version}.tar.gz
+Patch0: fs-uae-3.0.5-compile.patch
+License: GPLv2
 Group: Emulators
-BuildRoot: %{_tmppath}/%{name}-%{version}-root
-BuildRequires: XFree86-devel
-BuildRequires: gtk+-devel
-BuildRequires: glib-devel cdrkit
-BuildRequires: SDL-devel
+Provides: fs-uae = %{EVRD}
 
 %description
 UAE is a software emulation of the Amiga system hardware, which
@@ -41,27 +23,11 @@ images, which are copyrighted and, of course, not included here.
 
 
 %prep
-%setup -q -a 1 -n uae-%{mversion}
+%autosetup -p1 -n fs-uae-%{version}
 
 %build
-%if %build_scsi
-# build libscg for scsi-device support
-(cd %{cdrname}-%{cdrmainvers}
-ln -sf i586-linux-cc.rul RULES/ia64-linux-cc.rul
-ln -sf i586-linux-cc.rul RULES/x86_64-linux-cc.rul
-ln -sf i586-linux-cc.rul RULES/amd64-linux-cc.rul
-ln -sf i686-linux-cc.rul RULES/athlon-linux-cc.rul
-pwd
-CFLAGS="$RPM_OPT_FLAGS" \
-CONFFLAGS="%{_target_platform} --prefix=%{_prefix}" \
-	XL_ARCH=%{_target_cpu} ./Gmake)
-(cd src
-./install_libscg ../%{cdrname}-%{cdrmainvers})
-%endif
-
 # build uae
-CFLAGS="-O2 -fomit-frame-pointer" \
-./configure --prefix=%{_prefix} \
+%configure \
             --with-x \
             --with-sdl \
             --with-sdl-sound \
@@ -69,35 +35,20 @@ CFLAGS="-O2 -fomit-frame-pointer" \
             --enable-threads \
             --enable-ui \
 	    --enable-jit \
-%if %build_scsi
             --enable-scsi-device \
-%else
-            --disable-scsi-device \
-%endif
 	    --enable-bsdsock
-make
+%make_build
 
 %install
-rm -rf %{buildroot}
-mkdir -p %{buildroot}/%{_prefix}/{bin,lib/uae/amiga/source}
-%makeinstall
-cp -pR amiga/* %{buildroot}/%{_libdir}/uae/amiga/.
+%make_install
+%find_lang fs-uae
 
-%clean
-rm -rf %{buildroot}
-
-
-%files
+%files -f fs-uae.lang
 %defattr(-,root,root)
-%doc docs/*
-%{_bindir}/*
-%{_libdir}/uae
-%doc docs/*
-%{_datadir}/uae/configs/a1200.uae
-%{_datadir}/uae/configs/a4000.uae
-%{_datadir}/uae/configs/a500-expanded.uae
-%{_datadir}/uae/configs/a500.uae
-%{_datadir}/uae/configs/a500plus.uae
-%{_datadir}/uae/configs/poweruser.uae
-
-
+%{_bindir}/fs-uae
+%{_bindir}/fs-uae-device-helper
+%{_datadir}/applications/fs-uae.desktop
+%{_datadir}/fs-uae
+%{_datadir}/icons/*/*/*/fs-uae.*
+%{_datadir}/mime/packages/fs-uae.xml
+%doc %{_docdir}/fs-uae
