@@ -11,6 +11,7 @@ Provides: fs-uae = %{EVRD}
 BuildRequires: zip
 BuildRequires: pkgconfig(sdl2)
 BuildRequires: pkgconfig(x11)
+BuildRequires: pkgconfig(xi)
 BuildRequires: pkgconfig(libmpeg2)
 BuildRequires: pkgconfig(libmpeg2convert)
 BuildRequires: pkgconfig(libpng)
