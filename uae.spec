@@ -44,7 +44,9 @@ images, which are copyrighted and, of course, not included here.
             --with-sdl-gfx \
             --enable-threads \
             --enable-ui \
+%ifarch %{x86_64}
 	    --enable-jit \
+%endif
             --enable-scsi-device \
 	    --enable-bsdsock
 %make_build
