@@ -8,6 +8,15 @@ Patch0: fs-uae-3.0.5-compile.patch
 License: GPLv2
 Group: Emulators
 Provides: fs-uae = %{EVRD}
+BuildRequires: zip
+BuildRequires: pkgconfig(sdl2)
+BuildRequires: pkgconfig(x11)
+BuildRequires: pkgconfig(libmpeg2)
+BuildRequires: pkgconfig(libmpeg2convert)
+BuildRequires: pkgconfig(libpng)
+BuildRequires: pkgconfig(zlib)
+BuildRequires: pkgconfig(openal)
+BuildRequires: pkgconfig(glib-2.0)
 
 %description
 UAE is a software emulation of the Amiga system hardware, which
