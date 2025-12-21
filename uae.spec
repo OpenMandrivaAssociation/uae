@@ -8,6 +8,11 @@ Patch0: fs-uae-3.0.5-compile.patch
 License: GPLv2
 Group: Emulators
 Provides: fs-uae = %{EVRD}
+BuildRequires:	autoconf
+BuildRequires:	automake
+BuildRequires:	libtool-base
+BuildRequires:	slibtool
+BuildRequires:	make
 BuildRequires: zip
 BuildRequires: pkgconfig(sdl2)
 BuildRequires: pkgconfig(x11)
