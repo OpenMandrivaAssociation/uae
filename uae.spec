@@ -41,6 +41,8 @@ images, which are copyrighted and, of course, not included here.
 %autosetup -p1 -n fs-uae-%{version}
 
 %build
+# C++17 makes the leftover 'register' keywords in the UAE core an error
+export CXXFLAGS="%{optflags} -Wno-register"
 %ifarch x86_64 znver1
 %configure --enable-jit
 %else
