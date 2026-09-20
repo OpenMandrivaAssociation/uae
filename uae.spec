@@ -41,11 +41,10 @@ images, which are copyrighted and, of course, not included here.
 %autosetup -p1 -n fs-uae-%{version}
 
 %build
-%configure \
 %ifarch x86_64 znver1
-	--enable-jit \
+%configure --enable-jit
 %else
-	--disable-jit \
+%configure --disable-jit
 %endif
 %make_build
 
