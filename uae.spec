@@ -1,28 +1,29 @@
-Summary: A software emulation of the Amiga system
-Name: uae
-Version: 3.1.66
-Release: 1
-URL: https://fs-uae.net/download#source
-Source0: https://fs-uae.net/files/FS-UAE/Stable/%{version}/fs-uae-%{version}.tar.xz
-Patch0: fs-uae-3.0.5-compile.patch
-License: GPLv2
-Group: Emulators
-Provides: fs-uae = %{EVRD}
+Summary:	A software emulation of the Amiga system
+Name:		uae
+Version:	3.2.35
+Release:	1
+URL:		https://fs-uae.net
+Source0:	https://github.com/FrodeSolheim/fs-uae/releases/download/v%{version}/fs-uae-%{version}.tar.xz
+Patch0:		fs-uae-3.0.5-compile.patch
+License:	GPLv2
+Group:		Emulators
+Provides:	fs-uae = %{EVRD}
 BuildRequires:	autoconf
 BuildRequires:	automake
-BuildRequires:	libtool-base
 BuildRequires:	slibtool
 BuildRequires:	make
-BuildRequires: zip
-BuildRequires: pkgconfig(sdl2)
-BuildRequires: pkgconfig(x11)
-BuildRequires: pkgconfig(xi)
-BuildRequires: pkgconfig(libmpeg2)
-BuildRequires: pkgconfig(libmpeg2convert)
-BuildRequires: pkgconfig(libpng)
-BuildRequires: pkgconfig(zlib)
-BuildRequires: pkgconfig(openal)
-BuildRequires: pkgconfig(glib-2.0)
+BuildRequires:	gettext
+BuildRequires:	zip
+BuildRequires:	pkgconfig(sdl2)
+BuildRequires:	pkgconfig(x11)
+BuildRequires:	pkgconfig(xi)
+BuildRequires:	pkgconfig(gl)
+BuildRequires:	pkgconfig(libmpeg2)
+BuildRequires:	pkgconfig(libmpeg2convert)
+BuildRequires:	pkgconfig(libpng)
+BuildRequires:	pkgconfig(zlib)
+BuildRequires:	pkgconfig(openal)
+BuildRequires:	pkgconfig(glib-2.0)
 
 %description
 UAE is a software emulation of the Amiga system hardware, which
@@ -36,24 +37,16 @@ emulated counterparts.
 Note that to fully emulate the Amiga you need the Amiga KickStart ROM
 images, which are copyrighted and, of course, not included here.
 
-
 %prep
 %autosetup -p1 -n fs-uae-%{version}
 
 %build
-# build uae
 %configure \
-            --with-x \
-            --with-sdl \
-            --with-sdl-sound \
-            --with-sdl-gfx \
-            --enable-threads \
-            --enable-ui \
-%ifarch %{x86_64}
-	    --enable-jit \
+%ifarch x86_64 znver1
+	--enable-jit \
+%else
+	--disable-jit \
 %endif
-            --enable-scsi-device \
-	    --enable-bsdsock
 %make_build
 
 %install
@@ -61,7 +54,6 @@ images, which are copyrighted and, of course, not included here.
 %find_lang fs-uae
 
 %files -f fs-uae.lang
-%defattr(-,root,root)
 %{_bindir}/fs-uae
 %{_bindir}/fs-uae-device-helper
 %{_datadir}/applications/fs-uae.desktop
