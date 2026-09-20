@@ -1,7 +1,7 @@
 Summary:	A software emulation of the Amiga system
 Name:		uae
 Version:	3.2.35
-Release:	1
+Release:	2
 URL:		https://fs-uae.net
 Source0:	https://github.com/FrodeSolheim/fs-uae/releases/download/v%{version}/fs-uae-%{version}.tar.xz
 Patch0:		fs-uae-3.0.5-compile.patch
